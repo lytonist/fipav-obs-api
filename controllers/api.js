@@ -24,10 +24,10 @@ exports.register = (req, res) => {
 }
 
 exports.login = (req, res) => {
-    User.findOne({ username: req.body.username }, (err, user) => {
-        if (err) { console.log(err) };
+    User.findOne({ username: req.body.username }, (err, user, next) => {
+        if (err) { next(err) };
         if (!user) {
-            res.status(401).json({ success: false, msg: 'User not found' });
+            return res.status(401).json({ success: false, msg: 'User not found' });
         }
         
         const isValid = validPassword(req.body.password, user.hash, user.salt);
