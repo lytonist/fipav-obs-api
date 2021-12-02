@@ -13,6 +13,8 @@ const app = express();
 require('./config/database');
 require('./config/passport')(passport);
 
+app.use(passport.initialize());
+
 app.use(morgan('dev'));
 
 app.use(express.json());

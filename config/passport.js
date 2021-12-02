@@ -18,13 +18,13 @@ module.exports = (passport) => {
         console.log(jwt_payload);
         User.findById(jwt_payload.sub, (err, user) => {
             if (err) {
-                return (err, false);
+                return done(err, false);
             }
 
             if (user) {
-                return (null, user);
+                return done(null, user);
             } else {
-                return (null, false);
+                return done(null, false);
             };
         });
     }));
