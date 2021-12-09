@@ -46,3 +46,13 @@ exports.protected = (req, res) => {
     const userObj = { _id: req.user._id, username: req.user.username };
     res.status(200).json({ success: true, msg: 'You are authorized', user: userObj });
 }
+
+exports.getUsers = (req, res) => {
+    User.find({}, 'username admin name lastname', { sort: { admin: 1, lastname: 1 } }, (err, users) => {
+        if (err) { next(err) };
+        if (!users) {
+            return res.status(404).json({ success: false, msg: 'Nessun utente trovato' });
+        }
+        res.status(200).json({ success: true, users: users });
+    });
+}
