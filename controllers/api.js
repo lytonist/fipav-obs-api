@@ -6,12 +6,16 @@ exports.getApiHome = (req, res) => {
 }
 
 exports.register = (req, res) => {
-    const { username, password } = req.body;
+    console.log(req.body)
+    const { username, password, firstname, lastname, email } = req.body;
     const { salt, hash } = genPassword(password);
     const newUser = new User({ 
         username, 
         hash, 
         salt, 
+        firstname,
+        lastname,
+        email,
         admin: req.body.admin ? req.body.admin : false 
     });
     newUser.save((err, user) => {
@@ -48,7 +52,7 @@ exports.protected = (req, res) => {
 }
 
 exports.getUsers = (req, res) => {
-    User.find({}, 'username admin name lastname', { sort: { admin: 1, lastname: 1 } }, (err, users) => {
+    User.find({}, 'username admin firstname lastname email', { sort: { admin: -1, lastname: 1 } }, (err, users) => {
         if (err) { next(err) };
         if (!users) {
             return res.status(404).json({ success: false, msg: 'Nessun utente trovato' });

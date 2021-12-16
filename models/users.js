@@ -6,8 +6,9 @@ const usersSchema = new Schema({
     hash: {type: String, required: true},
     salt: {type: String, required: true},
     admin: {type: Boolean, default: false},
-    name: {type: String},
-    lastname: {type: String}
+    firstname: {type: String, default: ''},
+    lastname: {type: String}, default: '',
+    email: {type: String, default: ''}
 });
 
 exports.User = mongoose.model('User', usersSchema);
