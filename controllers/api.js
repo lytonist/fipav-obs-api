@@ -2,29 +2,7 @@ const { genPassword, issueJWT, validPassword } = require('../lib/utils');
 const { User } = require('../models/users');
 
 exports.getApiHome = (req, res) => {
-    res.json({msg: 'Welcome!'});
-}
-
-exports.register = (req, res) => {
-    console.log(req.body)
-    const { username, password, firstname, lastname, email } = req.body;
-    const { salt, hash } = genPassword(password);
-    const newUser = new User({ 
-        username, 
-        hash, 
-        salt, 
-        firstname,
-        lastname,
-        email,
-        admin: req.body.admin ? req.body.admin : false 
-    });
-    newUser.save((err, user) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({success: false, msg: 'Per favore verifica i dati inseriti'});
-        };
-        res.json({success: true, user});
-    });
+    res.status(200).json({msg: 'Welcome!'});
 }
 
 exports.login = (req, res) => {
@@ -58,5 +36,35 @@ exports.getUsers = (req, res) => {
             return res.status(404).json({ success: false, msg: 'Nessun utente trovato' });
         }
         res.status(200).json({ success: true, users: users });
+    });
+}
+
+exports.newUser = (req, res) => {
+    const { username, password, firstname, lastname, email } = req.body;
+    const { salt, hash } = genPassword(password);
+    const newUser = new User({ 
+        username, 
+        hash, 
+        salt, 
+        firstname,
+        lastname,
+        email,
+        admin: req.body.admin ? req.body.admin : false 
+    });
+    newUser.save((err, user) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({success: false, msg: 'Per favore verifica i dati inseriti'});
+        };
+        res.status(200).json({success: true, user});
+    });
+}
+
+exports.editUser = (req, res) => {
+    const { id } = req.params;
+    User.findByIdAndUpdate(id, req.body, { new: true }, (err, user) => {
+        if (err) return console.error(err);
+        if (!user) return res.status(404).json({success: false, msg: 'L\'utente non è stato trovato'});
+        res.status(200).json({success: true, user});
     });
 }
