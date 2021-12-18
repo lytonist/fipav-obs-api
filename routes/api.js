@@ -31,6 +31,8 @@ router.route('/users')
     .post([ bodyEscape, bodyPassword, bodyAdmin, bodyEmail ], validate, api.newUser);
 
 router.route('/users/:id')
-    .put([ paramId, bodyEscape, bodyAdmin, bodyEmail ], validate, api.editUser);
+    .all(authenticateUser, userIsAdmin)
+    .patch([ paramId, bodyEscape, bodyAdmin, bodyEmail ], validate, api.editUser)
+    .delete([ paramId ], validate, api.deleteUser);
 
 module.exports = router;

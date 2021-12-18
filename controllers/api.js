@@ -1,4 +1,4 @@
-const { genPassword, issueJWT, validPassword } = require('../lib/utils');
+const { genPassword, issueJWT, randomString, validPassword } = require('../lib/utils');
 const { User } = require('../models/users');
 
 exports.getApiHome = (req, res) => {
@@ -28,6 +28,10 @@ exports.protected = (req, res) => {
     const userObj = { _id: req.user._id, username: req.user.username };
     res.status(200).json({ success: true, msg: 'You are authorized', user: userObj });
 }
+
+/*
+// USER ROUTES
+*/
 
 exports.getUsers = (req, res) => {
     User.find({}, 'username admin firstname lastname email', { sort: { admin: -1, lastname: 1 } }, (err, users) => {
@@ -62,9 +66,26 @@ exports.newUser = (req, res) => {
 
 exports.editUser = (req, res) => {
     const { id } = req.params;
+    if (req.body.password) {
+        // Reset with a random password
+        const newPassword = randomString();
+        const { salt, hash } = genPassword(newPassword);
+        req.body.salt = salt;
+        req.body.hash = hash;
+        delete req.body.password;
+    }
     User.findByIdAndUpdate(id, req.body, { new: true }, (err, user) => {
         if (err) return console.error(err);
         if (!user) return res.status(404).json({success: false, msg: 'L\'utente non è stato trovato'});
         res.status(200).json({success: true, user});
+    });
+}
+
+exports.deleteUser = (req, res) => {
+    const { id } = req.params;
+    User.findByIdAndDelete(id, (err, user) => {
+        if (err) return console.error(err);
+        if (!user) return res.status(404).json({success: false, msg: 'L\'utente non è stato trovato'});
+        res.status(200).json({success: true});
     });
 }
