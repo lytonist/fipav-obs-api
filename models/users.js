@@ -7,7 +7,7 @@ const usersSchema = new Schema({
     salt: {type: String, required: true},
     admin: {type: Boolean, default: false},
     firstname: {type: String, default: ''},
-    lastname: {type: String}, default: '',
+    lastname: {type: String, default: ''},
     email: {type: String, default: ''}
 });
 

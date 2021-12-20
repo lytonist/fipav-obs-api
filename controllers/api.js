@@ -25,7 +25,7 @@ exports.login = (req, res) => {
 }
 
 exports.protected = (req, res) => {
-    const userObj = { _id: req.user._id, username: req.user.username };
+    const userObj = { _id: req.user._id, username: req.user.username, admin: req.user.admin };
     res.status(200).json({ success: true, msg: 'You are authorized', user: userObj });
 }
 
