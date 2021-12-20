@@ -24,7 +24,7 @@ router.post('/login', [ bodyEscape ], validate, api.login);
 // Routes for Authenticated users
 router.get('/protected', authenticateUser, api.protected);
 
-// User Routes
+// Users Routes
 router.route('/users')
     .all(authenticateUser, userIsAdmin)
     .get(api.getUsers)
@@ -34,5 +34,15 @@ router.route('/users/:id')
     .all(authenticateUser, userIsAdmin)
     .patch([ paramId, bodyEscape, bodyAdmin, bodyEmail ], validate, api.editUser)
     .delete([ paramId ], validate, api.deleteUser);
+
+// Referees Routes
+router.route('/referees')
+    .get(authenticateUser, api.getReferees)
+    .post(authenticateUser, userIsAdmin, api.newReferee);
+
+router.route('/referees/:id')
+    .all(authenticateUser, userIsAdmin)
+    .patch([ paramId, bodyEscape, bodyEmail ], validate, api.editReferee)
+    .delete([ paramId ], validate, api.deleteReferee);
 
 module.exports = router;
