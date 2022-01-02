@@ -16,9 +16,6 @@ router.use(validate);
 // ROUTES
 */
 
-router.route('/')
-    .get(api.getApiHome);
-
 router.post('/login', [ bodyEscape ], validate, api.login);
 
 // Routes for Authenticated users

@@ -2,10 +2,6 @@ const { genPassword, issueJWT, randomString, validPassword } = require('../lib/u
 const { Referee } = require('../models/referees');
 const { User } = require('../models/users');
 
-exports.getApiHome = (req, res) => {
-    res.status(200).json({msg: 'Welcome!'});
-}
-
 exports.login = (req, res) => {
     User.findOne({ username: req.body.username }, (err, user, next) => {
         if (err) { next(err) };
