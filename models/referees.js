@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const refereesSchema = new Schema({
     firstname: {type: String, default: '', required: true},
     lastname: {type: String, default: '', required: true},
+    committee: {type: String, default: 'ak', required: true},
     email: {type: String, default: '', required: true, unique: true}
 });
 

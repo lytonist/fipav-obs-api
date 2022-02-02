@@ -13,7 +13,7 @@ exports.login = (req, res) => {
 
         if (isValid) {
             const tokenObject = issueJWT(user);
-            const userObj = { _id: user._id, username: user.username };
+            const userObj = { _id: user._id, username: user.username, admin: user.admin };
             res.status(200).json({ success: true, token: tokenObject, expiresIn: tokenObject.expires, user: userObj });
         } else {
             res.status(401).json({ success: false, msg: 'La password non è corretta' });
@@ -31,7 +31,7 @@ exports.protected = (req, res) => {
 */
 
 exports.getUsers = (req, res) => {
-    User.find({}, 'username admin firstname lastname email', { sort: { admin: -1, lastname: 1 } }, (err, users) => {
+    User.find({}, undefined, { sort: { admin: -1, lastname: 1 } }, (err, users) => {
         if (err) {
             console.error(err);
             return res.status(500).json({success: false, msg: 'Per favore verifica i dati inseriti'});
@@ -41,7 +41,7 @@ exports.getUsers = (req, res) => {
 }
 
 exports.newUser = (req, res) => {
-    const { username, password, firstname, lastname, email } = req.body;
+    const { username, password, firstname, lastname, committee, role, email } = req.body;
     const { salt, hash } = genPassword(password);
     const newUser = new User({ 
         username, 
@@ -49,6 +49,8 @@ exports.newUser = (req, res) => {
         salt, 
         firstname,
         lastname,
+        committee,
+        role,
         email,
         admin: req.body.admin ? req.body.admin : false 
     });
@@ -99,8 +101,8 @@ exports.getReferees = (req, res) => {
 }
 
 exports.newReferee = (req, res) => {
-    const { firstname, lastname, email } = req.body;
-    const newReferee = new Referee({ firstname, lastname, email });
+    const { firstname, lastname, committee, email } = req.body;
+    const newReferee = new Referee({ firstname, lastname, committee, email });
     newReferee.save((err, referee) => {
         if (err) {
             console.error(err);

@@ -8,6 +8,8 @@ const usersSchema = new Schema({
     admin: {type: Boolean, default: false},
     firstname: {type: String, default: ''},
     lastname: {type: String, default: ''},
+    committee: {type: String, default: 'ak'},
+    role: {type: String, default: 'reg'},
     email: {type: String, default: ''}
 });
 
