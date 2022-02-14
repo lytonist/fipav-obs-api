@@ -1,5 +1,6 @@
 const { genPassword, issueJWT, randomString, validPassword } = require('../lib/utils');
 const { Referee } = require('../models/referees');
+const { Report } = require('../models/reports');
 const { User } = require('../models/users');
 
 exports.login = (req, res) => {
@@ -127,5 +128,28 @@ exports.deleteReferee = (req, res) => {
         if (err) return console.error(err);
         if (!referee) return res.status(404).json({success: false, msg: 'L\'arbitro non è stato trovato'});
         res.status(200).json({success: true});
+    });
+}
+
+/*
+// REPORTS ROUTES
+*/
+exports.getReports = (req, res) => {
+    // req.user.admin
+    const query = req.query || {};
+    Report.find(query, (err, reports) => {
+        if (err) { next(err) };
+        res.status(200).json({success: true, reports: reports});
+    });
+}
+
+exports.newReport = (req, res) => {
+    const newReport = new Report(req.body);
+    newReport.save((err, report) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({success: false, msg: 'Per favore verifica i dati inseriti'});
+        }
+        res.status(200).json({success: true, report: report});
     });
 }

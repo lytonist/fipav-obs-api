@@ -42,4 +42,9 @@ router.route('/referees/:id')
     .patch([ paramId, bodyEscape, bodyEmail ], validate, api.editReferee)
     .delete([ paramId ], validate, api.deleteReferee);
 
+// Reports Routes
+router.route('/reports')
+    .get(api.getReports)
+    .post(authenticateUser, api.newReport);
+
 module.exports = router;
