@@ -137,19 +137,23 @@ exports.deleteReferee = (req, res) => {
 exports.getReports = (req, res) => {
     // req.user.admin
     const query = req.query || {};
-    Report.find(query, (err, reports) => {
-        if (err) { next(err) };
-        res.status(200).json({success: true, reports: reports});
-    });
+    Report.find(query)
+        .populate('general.first_ref')
+        .populate('general.second_ref')
+        .exec((err, reports) => {
+            if (err) { console.error(err) };
+            res.status(200).json({success: true, reports: reports});
+        });
 }
 
 exports.newReport = (req, res) => {
     const newReport = new Report(req.body);
-    newReport.save((err, report) => {
+    newReport.save(async (err, report) => {
         if (err) {
             console.error(err);
             return res.status(500).json({success: false, msg: 'Per favore verifica i dati inseriti'});
         }
+        await report.populate(['general.first_ref', 'general.second_ref']);
         res.status(200).json({success: true, report: report});
     });
 }
