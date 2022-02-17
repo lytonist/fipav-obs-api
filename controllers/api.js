@@ -138,6 +138,7 @@ exports.getReports = (req, res) => {
     // req.user.admin
     const query = req.query || {};
     Report.find(query)
+        .populate('general.author')
         .populate('general.first_ref')
         .populate('general.second_ref')
         .exec((err, reports) => {
@@ -148,12 +149,48 @@ exports.getReports = (req, res) => {
 
 exports.newReport = (req, res) => {
     const newReport = new Report(req.body);
+    console.log(req.body)
     newReport.save(async (err, report) => {
         if (err) {
             console.error(err);
             return res.status(500).json({success: false, msg: 'Per favore verifica i dati inseriti'});
         }
-        await report.populate(['general.first_ref', 'general.second_ref']);
+        await report.populate(['general.author', 'general.first_ref', 'general.second_ref']).catch(err => console.error(err));
         res.status(200).json({success: true, report: report});
     });
+}
+
+exports.editReport = async (req, res) => {
+    const { id } = req.params;
+    let report = await Report.findById(id, 'general.author').exec().catch(err => console.error(err));
+    // Verifico che l'utente sia un admin o stia modificando un proprio report
+    if (req.user._id === report.general.author || req.user.admin) {
+        Report.findByIdAndUpdate(id, req.body, {new: true}, async (err, report) => {
+            if (err) return console.error(err);
+            if (report) {
+                await report.populate(['general.author', 'general.first_ref', 'general.second_ref']).catch(err => console.error(err));
+                res.status(200).json({success: true, report: report});
+            } else {
+                res.status(404).json({success: false, msg: 'Il report non è stato trovato'})
+            }
+        });
+    } else {
+        res.status(500).json({success: false, msg: 'Utente non autorizzato'});
+    }
+}
+
+exports.deleteReport = async (req, res) => {
+    const { id } = req.params;
+    const report = await Report.findById(id, 'general.author').exec().catch(err => console.error(err));
+    // Verifico che l'utente sia un admin o stia modificando un proprio report
+    if (req.user._id === report.general.author || req.user.admin) {
+        Report.findByIdAndDelete(id, (err, report) => {
+            if (err) return console.error(err);
+            if (report) {
+                res.status(200).json({success: true, report: report});
+            } else {
+                res.status(404) .json({success: false, msg: 'Il report non è stato trovato'});
+            }
+        });
+    }
 }

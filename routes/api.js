@@ -47,4 +47,9 @@ router.route('/reports')
     .get(api.getReports)
     .post(authenticateUser, api.newReport);
 
+router.route('/reports/:id')
+    .all(authenticateUser)
+    .patch([ paramId ], validate, api.editReport)
+    .delete([ paramId ], validate, api.deleteReport);
+
 module.exports = router;

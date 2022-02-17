@@ -29,9 +29,9 @@ const matchSchema = new Schema({
     dur1set:    { type: Number, default: 0 },
     dur2set:    { type: Number, default: 0 },
     dur3set:    { type: Number, default: 0 },
-    dur4set:    { type: Number, default: undefined },
-    dur5set:    { type: Number, default: undefined },
-    dur6set:    { type: Number, default: undefined },
+    dur4set:    { type: Number, default: 0 },
+    dur5set:    { type: Number, default: 0 },
+    dur6set:    { type: Number, default: 0 },
 });
 
 // Area Immagine
