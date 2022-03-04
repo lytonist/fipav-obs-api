@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 // Dati Generali
 const generalSchema = new Schema({
-    author:     { type: mongoose.Types.ObjectId, required: true },
+    author:     { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
     match_num:  { type: String, default: '' },
     series:     { type: String, default: 'CM' },
     date:       { type: String, default: '' },
@@ -145,7 +145,8 @@ const reportsSchema = new Schema({
     relational: relationalSchema,
     discipline: disciplineSchema,
     interview: interviewSchema,
-    events: eventsSchema
+    events: eventsSchema,
+    valid: { type: Boolean, default: false }
 });
 
 exports.Report = mongoose.model('Report', reportsSchema);
