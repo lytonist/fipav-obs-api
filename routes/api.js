@@ -49,6 +49,7 @@ router.route('/reports')
 
 router.route('/reports/:id')
     .all(authenticateUser)
+    .get([ paramId ], api.getReport)
     .patch([ paramId ], validate, api.editReport)
     .delete([ paramId ], validate, api.deleteReport);
 

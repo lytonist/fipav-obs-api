@@ -135,7 +135,6 @@ exports.deleteReferee = (req, res) => {
 // REPORTS ROUTES
 */
 exports.getReports = (req, res) => {
-    // req.user.admin
     const query = req.query || {};
     Report.find(query)
         .populate('general.author')
@@ -158,6 +157,19 @@ exports.newReport = (req, res) => {
         await report.populate(['general.author', 'general.first_ref', 'general.second_ref']).catch(err => console.error(err));
         res.status(200).json({success: true, report: report});
     });
+}
+
+exports.getReport = (req, res) => {
+    const { id } = req.params;
+    Report.findById(id)
+        .populate('general.author')
+        .populate('general.first_ref')
+        .populate('general.second_ref')
+        .exec((err, report) => {
+            if (err) return console.error(err);
+            if (!report) return res.status(404).json({success: false, msg: 'Il report non è stato trovato'});
+            res.status(200).json({success: true, report: report});
+        });
 }
 
 exports.editReport = async (req, res) => {

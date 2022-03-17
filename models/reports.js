@@ -64,7 +64,7 @@ const technicalSchema = new Schema({
     penetration_ord_1ref:   { type: Number, default: 0 },
     penetration_ord_2ref:   { type: Number, default: 0 },
     penetration_sev_1ref:   { type: Number, default: 0 },
-    penetration_sev_1ref:   { type: Number, default: 0 },
+    penetration_sev_2ref:   { type: Number, default: 0 },
     posfaults_ord_1ref:     { type: Number, default: 0 },
     posfaults_ord_2ref:     { type: Number, default: 0 },
     posfaults_sev_1ref:     { type: Number, default: 0 },
