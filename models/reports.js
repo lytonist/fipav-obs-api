@@ -146,7 +146,8 @@ const reportsSchema = new Schema({
     discipline: disciplineSchema,
     interview: interviewSchema,
     events: eventsSchema,
-    valid: { type: Boolean, default: false }
+    valid: { type: Boolean, default: false },
+    shortid: { type: String, required: true, unique: true }
 });
 
 exports.Report = mongoose.model('Report', reportsSchema);

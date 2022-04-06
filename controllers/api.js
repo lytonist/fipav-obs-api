@@ -3,6 +3,10 @@ const { Referee } = require('../models/referees');
 const { Report } = require('../models/reports');
 const { User } = require('../models/users');
 
+/*
+// ACCESS ROUTES
+*/
+
 exports.login = (req, res) => {
     User.findOne({ username: req.body.username }, (err, user, next) => {
         if (err) { next(err) };
@@ -25,6 +29,32 @@ exports.login = (req, res) => {
 exports.protected = (req, res) => {
     const userObj = { _id: req.user._id, username: req.user.username, admin: req.user.admin };
     res.status(200).json({ success: true, msg: 'You are authorized', user: userObj });
+}
+
+exports.accessReport = async (req, res) => {
+    const { email, reportId } = req.body;
+    const referee = await Referee.findOne({ email: email })
+        .exec()
+        .catch(err => {
+            if (err) return res.status(500).json({ success: false, msg: 'Qualcosa è andato storto' });
+        });
+    if (!referee) return res.status(404).json({ success: false, msg: 'Non è stato trovato un utente associato all\'indirizzo e-mail' });
+    Report.findOne({ shortid: reportId })
+        .populate('general.author')
+        .populate('general.first_ref')
+        .populate('general.second_ref')
+        .exec((err, report) => {
+            if (err) return res.status(500).json({ success: false, msg: 'Qualcosa è andato storto' });
+            if (!report) return res.status(404).json({ success: false, msg: 'Non è stato trovato il report richiesto' });
+            if (!report.valid) return res.status(401).json({ success: false, msg: 'Il report richiesto non è ancora accessibile' });
+            if ((report.general.first_ref?._id.toString() === referee._id.toString()) || (report.general.second_ref?._id.toString() === referee._id.toString())) {
+                // Successo
+                const refereeRole = report.general.first_ref?._id.toString() === referee._id.toString() ? '1st' : '2nd';
+                res.status(200).json({ success: true, referee: refereeRole, report: report });
+            } else {
+                res.status(401).json({ success: false, msg: 'Non puoi accedere al report richiesto' });
+            }
+        });
 }
 
 /*
@@ -148,7 +178,6 @@ exports.getReports = (req, res) => {
 
 exports.newReport = (req, res) => {
     const newReport = new Report(req.body);
-    console.log(req.body)
     newReport.save(async (err, report) => {
         if (err) {
             console.error(err);

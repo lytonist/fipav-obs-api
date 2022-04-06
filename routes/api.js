@@ -7,7 +7,7 @@ const api = require('../controllers/api');
 const { authenticateUser, userIsAdmin, validate } = require('../middlewares/middlewares');
 
 /* Validators */
-const { bodyAdmin, bodyEmail, bodyEscape, bodyPassword, paramId } = require('../validators/validators');
+const { bodyAdmin, bodyEmail, bodyEscape, bodyPassword, bodyReportId, paramId } = require('../validators/validators');
 
 // Validates body and params
 router.use(validate);
@@ -49,8 +49,12 @@ router.route('/reports')
 
 router.route('/reports/:id')
     .all(authenticateUser)
-    .get([ paramId ], api.getReport)
+    .get([ paramId ], validate, api.getReport)
     .patch([ paramId ], validate, api.editReport)
     .delete([ paramId ], validate, api.deleteReport);
+
+// Access Report Routes
+router.route('/report-access')
+    .post([ bodyEmail, bodyReportId ], validate, api.accessReport);
 
 module.exports = router;
